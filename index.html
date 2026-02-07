@@ -12,11 +12,13 @@
     .services {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; padding:40px}
     .card {background:white; padding:25px; border-radius:20px; text-align:center; box-shadow:0 10px 20px rgba(0,0,0,.08)}
     .form-container {max-width:600px; margin:0 auto 60px; background:white; padding:30px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,.1)}
-    input, textarea {width:100%; padding:12px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd; font-size:16px}
-    button {width:100%; padding:15px; background:#25D366; color:white; font-size:18px; border:none; border-radius:12px; cursor:pointer}
+    input, textarea, button {width:100%; padding:12px; margin-bottom:15px; border-radius:10px; font-size:16px}
+    input, textarea {border:1px solid #ddd;}
+    button {background:#25D366; color:white; border:none; cursor:pointer}
     footer {text-align:center; padding:30px; background:#fff; border-top:1px solid #eee}
     .map-section {padding:40px; text-align:center;}
     .map-section iframe {border-radius:20px; border:0;}
+    .geo-button {background:#1e88e5; margin-bottom:15px;}
   </style>
 </head>
 <body>
@@ -47,6 +49,7 @@
   <input id="phone" placeholder="رقم الهاتف" />
   <input id="date" type="date" />
   <input id="place" placeholder="مكان الخدمة" />
+  <button type="button" class="geo-button" onclick="getLocation()">تحديد موقعك تلقائياً</button>
   <textarea id="details" placeholder="تفاصيل الطلب"></textarea>
   <button onclick="sendWhatsApp()">إرسال الطلب عبر واتساب</button>
 </section>
@@ -71,18 +74,36 @@
 </footer>
 
 <script>
-  function sendWhatsApp() {
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-    const date = document.getElementById('date').value;
-    const place = document.getElementById('place').value;
-    const details = document.getElementById('details').value;
+function sendWhatsApp() {
+  const name = document.getElementById('name').value;
+  const phone = document.getElementById('phone').value;
+  const date = document.getElementById('date').value;
+  const place = document.getElementById('place').value;
+  const details = document.getElementById('details').value;
 
-    const message = `طلب جديد من ODYSHOP%0A%0Aالاسم: ${name}%0Aالهاتف: ${phone}%0Aالتاريخ: ${date}%0Aالمكان: ${place}%0Aالتفاصيل: ${details}`;
-    const whatsappNumber = '212660088147';
+  const message = `طلب جديد من ODYSHOP%0A%0Aالاسم: ${name}%0Aالهاتف: ${phone}%0Aالتاريخ: ${date}%0Aالمكان: ${place}%0Aالتفاصيل: ${details}`;
+  const whatsappNumber = '212660088147';
 
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+  window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+}
+
+// Fonction pour obtenir la localisation
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        document.getElementById('place').value = `Latitude: ${lat}, Longitude: ${lng}`;
+      },
+      function(error) {
+        alert('تعذر الحصول على موقعك. الرجاء التحقق من إعدادات الموقع.');
+      }
+    );
+  } else {
+    alert('المتصفح الخاص بك لا يدعم الحصول على الموقع.');
   }
+}
 </script>
 
 </body>
